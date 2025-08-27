@@ -46,3 +46,32 @@ type PassShareKeysResponse struct {
 		Keys []PassShareKeyResponse `json:"Keys"`
 	} `json:"ShareKeys"`
 }
+
+// PassItemResponse represents a Pass item as returned by the API
+type PassItemResponse struct {
+	ItemID               string  `json:"ItemID"`
+	ShareID              string  `json:"ShareID"`
+	ItemKey              string  `json:"ItemKey"`              // Base64 PGP-encrypted item key
+	Content              string  `json:"Content"`              // Base64 encrypted item content
+	State                int     `json:"State"`                // Item state (active, trashed, etc.)
+	Pinned               bool    `json:"Pinned"`               // Whether item is pinned
+	AliasEmail           *string `json:"AliasEmail,omitempty"` // Alias email if this is an alias item
+	ContentFormatVersion int     `json:"ContentFormatVersion"`
+	KeyRotation          int     `json:"KeyRotation"`          // Key rotation used for this item
+	Revision             int     `json:"Revision"`             // Item revision number
+	RevisionTime         int64   `json:"RevisionTime"`         // Unix timestamp of revision
+	CreateTime           int64   `json:"CreateTime"`
+	ModifyTime           int64   `json:"ModifyTime"`
+	LastUseTime          *int64  `json:"LastUseTime,omitempty"` // Last time item was used
+	Flags                int     `json:"Flags"`                 // Item flags (monitoring, etc.)
+}
+
+// PassItemsResponse represents the response from listing Pass items
+// Based on web client: Items.RevisionsData contains the actual items
+type PassItemsResponse struct {
+	Code  int `json:"Code"`
+	Items struct {
+		RevisionsData []PassItemResponse `json:"RevisionsData"`
+		LastToken     *string            `json:"LastToken,omitempty"` // For pagination
+	} `json:"Items"`
+}

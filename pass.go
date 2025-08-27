@@ -12,6 +12,7 @@ const (
 	passSharesPath     = "/pass/v1/share"
 	passSharePath      = "/pass/v1/share/%s"
 	passShareKeysPath  = "/pass/v1/share/%s/key"
+	passItemsPath      = "/pass/v1/share/%s/item"
 )
 
 // GetPassShares retrieves all Pass shares for the authenticated user
@@ -56,4 +57,19 @@ func (c *Client) GetPassShareKeys(ctx context.Context, shareID string) ([]PassSh
 	}
 
 	return res.ShareKeys.Keys, nil
+}
+
+// GetPassItems retrieves all items for a specific Pass share
+func (c *Client) GetPassItems(ctx context.Context, shareID string) ([]PassItemResponse, error) {
+	var res PassItemsResponse
+	
+	path := fmt.Sprintf(passItemsPath, shareID)
+	if err := c.do(ctx, func(r *resty.Request) (*resty.Response, error) {
+		return r.SetResult(&res).Get(path)
+	}); err != nil {
+		return nil, fmt.Errorf("getting pass items for share %s: %w", shareID, err)
+	}
+
+	// Return the items from RevisionsData
+	return res.Items.RevisionsData, nil
 }
